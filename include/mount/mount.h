@@ -1,0 +1,4 @@
+#ifndef MOUNT_PROTOCOL_H
+#define MOUNT_PROTOCOL_H
+
+#endif//! MOUNT_PROTOCOL_H
