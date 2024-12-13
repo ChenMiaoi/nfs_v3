@@ -182,5 +182,6 @@ extern void                rpc_set_tcp_syncnt( struct rpc_context* rpc, int v );
 extern void                rpc_set_uid( struct rpc_context* rpc, int uid );
 extern void                rpc_set_gid( struct rpc_context* rpc, int gid );
 extern void                rpc_set_debug( struct rpc_context* rpc, int level );
+extern void                rpc_set_timeout( struct rpc_context* rpc, int timeout_msecs );
 
 #endif//! RPC_V2_H

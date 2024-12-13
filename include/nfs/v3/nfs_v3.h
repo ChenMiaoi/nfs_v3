@@ -1,8 +1,8 @@
 #ifndef NFS_V3_H
 #define NFS_V3_H
 
-#include "rpcgen_mount.h"
-#include <rpc.h>
+#include <rpc/rpc.h>
+#include <rpcgen_mount.h>
 #include <rpcgen_nfs_v3.h>
 
 #include <memory>
@@ -157,9 +157,6 @@ extern void nfs_set_nfsport( struct nfs_context* nfs, int port );
 extern void nfs_set_mountport( struct nfs_context* nfs, int port );
 extern void nfs_set_readmax( struct nfs_context* nfs, size_t readmax );
 extern void nfs_set_writemax( struct nfs_context* nfs, size_t writemax );
-extern void nfs_set_readdir_max_buffer_size( struct nfs_context* nfs,
-                                             uint32_t            dircount,
-                                             uint32_t            maxcount );
 extern void nfs_set_readdir_max_buffer_size( struct nfs_context* nfs,
                                              uint32_t            dircount,
                                              uint32_t            maxcount );

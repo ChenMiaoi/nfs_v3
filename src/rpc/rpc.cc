@@ -4,7 +4,7 @@
 #include <rpc/auth.h>
 #include <string>
 
-extern struct rpc_context* rpc_init_context( void ) {
+struct rpc_context* rpc_init_context( void ) {
   struct rpc_context* rpc;
   static uint32_t     salt = 0;
 
@@ -73,4 +73,19 @@ void rpc_reset_queue( struct rpc_queue* q ) {
 bool rpc_set_username( struct rpc_context* rpc, const std::string& username ) {
   //? HAS LIBKRB5
   return true;
+}
+
+void rpc_set_tcp_syncnt( struct rpc_context* rpc, int v ) {
+}
+
+void rpc_set_uid( struct rpc_context* rpc, int uid ) {
+}
+
+void rpc_set_gid( struct rpc_context* rpc, int gid ) {
+}
+
+void rpc_set_debug( struct rpc_context* rpc, int level ) {
+}
+
+void rpc_set_timeout( struct rpc_context* rpc, int timeout_msecs ) {
 }

@@ -23,10 +23,14 @@ endif()
 if(${ENABLE_LOGGING})
   set(SPDLOG_BUILD_SHARED ON)
   add_subdirectory(third_party/spdlog)
+  include_directories(
+    third_party/spdlog/include
+  )
+  add_compile_definitions(ENABLE_LOGGING)
 endif()
 
 include_directories(
-  include
+  include/
   include/nfs 
   include/rpc
   include/mount

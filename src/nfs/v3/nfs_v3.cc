@@ -1,9 +1,11 @@
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
 #include <nfs/v3/nfs_v3.h>
 #include <optional>
 #include <rpc/rpc.h>
+#include <spdlog/spdlog.h>
 #include <string>
 
 struct nfs_context* nfs_init_context( void ) {
@@ -130,13 +132,13 @@ static std::optional< nfs_url* > nfs_parse_url( struct nfs_context* nfs,
     ques_pos                    = 0;// '?'
 
   if ( at_pos = url.find( '@' ); at_pos != std::string::npos ) {
-    std::string user_name = url.substr( 6, at_pos );
-    rpc_set_username( nfs_get_rpc_context( nfs ), user_name );
+    std::string user_name = url.substr( 6, at_pos - 6 );
+    // rpc_set_username( nfs_get_rpc_context( nfs ), user_name );
   }
 
-  if ( slash_pos = url.find_first_of( '/' ); slash_pos != std::string::npos ) {
+  if ( slash_pos = url.find_first_of( '/', 6 ); slash_pos != std::string::npos ) {
     std::string sp = url.substr(
-      at_pos != std::string::npos ? at_pos : 6,
+      at_pos != std::string::npos ? at_pos + 1 : 7,
       slash_pos - at_pos );
 
     if ( auto colon_pos = sp.find( ':' ); colon_pos != std::string::npos ) {
@@ -151,7 +153,7 @@ static std::optional< nfs_url* > nfs_parse_url( struct nfs_context* nfs,
 
   std::string file_path;
   if ( ques_pos = url.find( '?' ); ques_pos != std::string::npos ) {
-    std::string args = url.substr( ques_pos );
+    std::string args = url.substr( ques_pos + 1 );
     file_path        = url.substr( slash_pos, ques_pos - slash_pos );
   } else {
     file_path = url.substr( slash_pos );
@@ -163,6 +165,11 @@ static std::optional< nfs_url* > nfs_parse_url( struct nfs_context* nfs,
     return std::nullopt;
   }
 
+#if ENABLE_LOGGING
+  spdlog::info( "server: {}, port: {}, file: {}",
+                urls->server, nfs->nfsi->nfsport, file_path );
+#endif
+
   return urls.get();
 }
 
@@ -171,12 +178,55 @@ struct nfs_url* nfs_parse_url_full( struct nfs_context* nfs,
   return nfs_parse_url( nfs, url, false, false ).value_or( nullptr );
 }
 
-extern struct nfs_url* nfs_parse_url_dir( struct nfs_context* nfs,
-                                          const std::string&  url ) {
+struct nfs_url* nfs_parse_url_dir( struct nfs_context* nfs,
+                                   const std::string&  url ) {
   return nfs_parse_url( nfs, url, true, false ).value_or( nullptr );
 }
 
-extern struct nfs_url* nfs_parse_url_incomplete( struct nfs_context* nfs,
-                                                 const std::string&  url ) {
+struct nfs_url* nfs_parse_url_incomplete( struct nfs_context* nfs,
+                                          const std::string&  url ) {
   return nfs_parse_url( nfs, url, false, true ).value_or( nullptr );
+}
+
+struct rpc_context* nfs_get_rpc_context( struct nfs_context* nfs ) {
+  assert( nfs->rpc->magic == RPC_CONTEXT_MAGIC );
+  return nfs->rpc;
+}
+
+void nfs_set_timeout( struct nfs_context* nfs, int timeout_msecs ) {
+  nfs->nfsi->timeout = timeout_msecs;
+  rpc_set_timeout( nfs->rpc, timeout_msecs );
+}
+
+void nfs_set_retrans( struct nfs_context* nfs, int retrans ) {
+}
+
+void nfs_set_auto_traverse_mounts( struct nfs_context* nfs, int enabled ) {
+}
+
+void nfs_set_dircache( struct nfs_context* nfs, int enabled ) {
+}
+
+void nfs_set_autoreconnect( struct nfs_context* nfs, int num_retries ) {
+}
+
+int nfs_set_version( struct nfs_context* nfs, int version ) {
+}
+
+void nfs_set_nfsport( struct nfs_context* nfs, int port ) {
+  nfs->nfsi->nfsport = port;
+}
+
+void nfs_set_mountport( struct nfs_context* nfs, int port ) {
+}
+
+void nfs_set_readmax( struct nfs_context* nfs, size_t readmax ) {
+}
+
+void nfs_set_writemax( struct nfs_context* nfs, size_t writemax ) {
+}
+
+void nfs_set_readdir_max_buffer_size( struct nfs_context* nfs,
+                                      uint32_t            dircount,
+                                      uint32_t            maxcount ) {
 }

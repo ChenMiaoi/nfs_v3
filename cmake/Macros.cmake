@@ -89,6 +89,13 @@ function(enable_test_module module_name)
       add_executable(${test_exe} ${mod_src})
       target_link_libraries(${test_exe} PRIVATE nfs_v3 rpc_v2 mount gtest gtest_main pthread)
       target_link_directories(${test_exe} PRIVATE ${CMAKE_BINARY_DIR}/lib)
+      target_include_directories(${test_exe} PRIVATE
+        ${CMAKE_BINARY_DIR}/rpc
+        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/include/mount
+        ${CMAKE_SOURCE_DIR}/include/nfs
+        ${CMAKE_SOURCE_DIR}/include/rpc
+      )
       include_directories(PRIAVTE ${CMAKE_SOURCE_DIR}/include)
       add_test(NAME ${test_exe} COMMAND ${test_exe})
 
